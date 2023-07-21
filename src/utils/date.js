@@ -5,3 +5,9 @@ export function isTheSameDay(date1, date2) {
 
   return isTheSameDate && isTheSameMonth && isTheSameYear;
 }
+
+export function formattedUnit(unit) {
+  return unit < 10 ? `0${unit}` : `${unit}`;
+}
+
+export const intlDateFormat = new Intl.DateTimeFormat("es-UR");
