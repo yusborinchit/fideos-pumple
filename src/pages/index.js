@@ -79,7 +79,7 @@ export default function Home() {
                 Fideos cumple en
               </span>
               <span className="text-4xl sm:text-5xl block mt-1 uppercase tracking-tight leading-[90%] font-black text-gray-900 text-center">
-                {formattedDaysTo} dias 🥳
+                {formattedDaysTo} días 🥳
               </span>
             </h1>
           )}
