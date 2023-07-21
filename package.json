@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "autoprefixer": "10.4.14",
+    "confetti-js": "0.0.18",
     "eslint": "8.45.0",
     "eslint-config-next": "13.4.11",
     "next": "13.4.11",

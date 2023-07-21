@@ -1,118 +1,108 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
+import { Poppins } from "next/font/google";
+import ConfettiGenerator from "confetti-js";
+import { isTheSameDay } from "../utils/date";
+import { useEffect } from "react";
 
-const inter = Inter({ subsets: ['latin'] })
+const poppins = Poppins({ subsets: ["latin"], weight: ["400", "700", "900"] });
+
+const FIDEOS_DATE = 20;
+const FIDEOS_MONTH = 6;
+
+const todayDate = new Date(Date.now());
+
+const currentDate = todayDate.getDate();
+const currentMonth = todayDate.getMonth();
+const currentYear = todayDate.getFullYear();
+
+let isPreviosToFideosDay = false;
+
+if (currentMonth < FIDEOS_MONTH) {
+  isPreviosToFideosDay = true;
+} else if (currentMonth === FIDEOS_MONTH && currentDate < FIDEOS_DATE) {
+  isPreviosToFideosDay = true;
+}
+
+const fideosDate = new Date(
+  isPreviosToFideosDay ? currentYear : currentYear + 1,
+  FIDEOS_MONTH,
+  FIDEOS_DATE
+);
+
+const intlDate = new Intl.DateTimeFormat("es-UR");
+const formattedNextFideosDay = intlDate.format(fideosDate).split(", ")[0];
+
+const todayIsFideosDay = isTheSameDay(todayDate, fideosDate);
+
+const diffInMiliseconds = fideosDate.getTime() - todayDate.getTime();
+const aDayInMiliseconds = 1000 * 60 * 60 * 24;
+const diffInDays = Math.floor(diffInMiliseconds / aDayInMiliseconds);
+
+const intlRelative = new Intl.RelativeTimeFormat("es-UR", {
+  numeric: "auto",
+});
+
+const { value: formattedDaysTo } = intlRelative.formatToParts(
+  diffInDays,
+  "day"
+)[1];
 
 export default function Home() {
+  console.log(diffInDays);
+
+  useEffect(() => {
+    const confettiSettings = { target: "my-canvas" };
+    const confetti = new ConfettiGenerator(confettiSettings);
+    confetti.render();
+
+    return () => confetti.clear();
+  }, []);
+
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
+    <div
+      className={`px-4 grid h-screen overflow-hidden place-items-center ${poppins.className}`}
     >
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/pages/index.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
+      <div>
+        <canvas
+          id="my-canvas"
+          className="absolute inset-0 w-full h-full pointer-events-none"
+        ></canvas>
+        <header>
+          {todayIsFideosDay ? (
+            <h1 className="text-4xl text-center block leading-[110%] font-black text-gray-900 tracking-tight sm:text-5xl">
+              Feliz <span>cumple</span> Fideos! 🥳
+            </h1>
+          ) : (
+            <h1>
+              <span className="text-lg block text-center leading-[100%] text-gray-500">
+                Fideos cumple en
+              </span>
+              <span className="text-4xl sm:text-5xl block mt-1 uppercase tracking-tight leading-[90%] font-black text-gray-900 text-center">
+                {formattedDaysTo} dias 🥳
+              </span>
+            </h1>
+          )}
+        </header>
+        <main className="pt-6 mx-auto w-fit">
           <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
+            href="https://www.instagram.com/p/Ck57MsoIHZm/"
             target="_blank"
-            rel="noopener noreferrer"
+            className="bg-gradient-to-tl rounded-full hover:shadow-xl hover:-translate-y-2 transition-all p-[6px] grid place-items-center from-pink-500 via-red-500 to-yellow-500"
           >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+            <img
+              src="/fideos.webp"
+              alt="Fideos"
+              className="rounded-full w-44 sm:w-56 aspect-square"
             />
           </a>
-        </div>
+        </main>
+        <footer className="pt-6">
+          {!todayIsFideosDay && (
+            <p className="text-sm text-center text-gray-500">
+              Próximo cumple 🤓: {formattedNextFideosDay}
+            </p>
+          )}
+        </footer>
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    </div>
+  );
 }
