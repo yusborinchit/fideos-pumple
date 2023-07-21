@@ -50,6 +50,8 @@ export default function Home() {
   console.log(diffInDays);
 
   useEffect(() => {
+    if (!todayIsFideosDay) return;
+
     const confettiSettings = { target: "my-canvas" };
     const confetti = new ConfettiGenerator(confettiSettings);
     confetti.render();
